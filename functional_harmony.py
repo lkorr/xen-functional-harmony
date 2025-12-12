@@ -100,171 +100,131 @@ class EDOSystem:
         return False
 
 
-# 12-EDO system definition
-EDO_12 = EDOSystem(
-    edo=12,
-    interval_quality_list=['s','o','u','m','m','u','o','s','l','h','h','l'],
-    #                       0   1   2   3   4   5   6   7   8   9  10  11
-    #                      P1  m2  M2  m3  M3  P4  A4  P5  m6  M6  m7  M7
-    leading_targets={8: 7, 11: 0},  # m6->P5, M7->root
-    dominant_leading_intervals={11},  # Only M7 creates true dominant function
-    chord_intervals=[
-        (0, 4, 7),  # Major
-        (0, 3, 7),  # Minor
-        (0, 3, 6),  # Diminished
-        (0, 4, 8),  # Augmented
-    ],
-    chord_notation_systems={
-        'full': ['maj', 'min', 'dim', 'aug'],
-        'symbols': ['M', 'm', '°', '+'],
-    },
-    note_name_systems={
-        'letters': ['C', 'C♯/D♭', 'D', 'D♯/E♭', 'E', 'F', 'F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B'],
-        'sharps': ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'],
-        'flats': ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'],
-        'letters_and_numbers': [f'{i} {name}' for i, name in enumerate(['C', 'C♯/D♭', 'D', 'D♯/E♭', 'E', 'F', 'F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B'])],
-        'roman_numerals': ['I', '♭II', 'II', '♭III', 'III', 'IV', '♯IV', 'V', '♭VI', 'VI', '♭VII', 'VII'],
-        'numbers': [str(i) for i in range(12)],
-    },
-    current_note_names='letters'
-)
+def parse_edo_data_file(filepath: str) -> Dict[int, EDOSystem]:
+    """
+    Parse the EDO data markdown file and return a dictionary of EDO systems.
 
-# 22-EDO system definition
-EDO_22 = EDOSystem(
-    edo=22,
-    interval_quality_list=['s','o','u','u','u','m','m','m','m','u','u','o','o','s','h','l','h','h','h','h','l','l'],
-    #                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21
-    #                      P1  ¼t  st 3qt  Wt sn3 m3  M3  s4  P4  A4  tt  d5  P5  A5  m6  M6  n7  h7  m7  M7  sM7
-    # Interval names:
-    # P1=Perfect unison, ¼t=Quarter-tone, st=Semitone, 3qt=3-quarter-tone (flat whole tone)
-    # Wt=Whole tone, sn3=Subminor third (neutral 3rd small), m3=Minor third, M3=Major third
-    # s4=Superfourth, P4=Perfect fourth, A4=Augmented fourth, tt=Tritone, d5=Diminished fifth
-    # P5=Perfect fifth, A5=Augmented fifth, m6=Minor sixth, M6=Major sixth
-    # n7=Neutral seventh, h7=Harmonic seventh, m7=Minor seventh, M7=Major seventh, sM7=Supermajor seventh
-    leading_targets={15: 13, 20: 0, 21: 0},  # m6->P5, M7->root, sM7->root
-    dominant_leading_intervals={20, 21},  # M7 and sM7 create dominant function
-    chord_intervals=[
-        (0, 5, 10),  # Subdiminished: root, sub3, sub3 - orwell
-        (0, 5, 11),  # Subminor up-flat five: root, sub3, min3 - utonal diminished
-        (0, 6, 11),  # Diminished: root, min3, sub3 - otonal diminished
-        (0, 5, 12),  # Subminor down five: root, sub3, Maj3 - orwell minor
-        (0, 6, 12),  # Minor down five: root, min3, min3 - keemic
-        (0, 7, 12),  # Down-five: root, Maj3, sub3 - orwell major
-        (0, 5, 13),  # Subminor: root, sub3, Sup3
-        (0, 6, 13),  # Minor: root, min3, Maj3
-        (0, 7, 13),  # Major: root, Maj3, min3
-        (0, 8, 13),  # Supermajor: root, Sup3, sub3
-        (0, 6, 14),  # Minor up five: root, min3, Sup3 - sensaminor
-        (0, 7, 14),  # Augmented: root, Maj3, Maj3 - magic
-        (0, 8, 14),  # Supermajor up five: root, Sup3, min3 - sensamajor
-        (0, 7, 15),  # Down-sharp five: root, Maj3, Sup3 - magic minor
-        (0, 8, 15),  # Supermajor down-sharp five: root, Sup3, Maj3 - magic major
-        (0, 8, 16),  # Supermajor sharp five: root, Sup3, Sup3 - sensamagic
-    ],
-    chord_notation_systems={
-        'full': ['sb5 (w)', 's^b5 (d−)', 'dim (d+)', 'sv5 (w−)', 'mv5 (k)', 'v5 (w+)',
-                 'submin (s)', 'min (m)', 'maj', 'supermaj (S)', 'm^5 (Z−)', 'aug (J)',
-                 'S^5 (Z+)', 'v#5 (J−)', 'Sv#5 (J+)', 'S#5 (Z)'],
-        'standard': ['sb5', 's^b5', 'dim', 'sv5', 'mv5', 'v5', 'submin', 'min', 'maj',
-                     'supermaj', 'm^5', 'aug', 'S^5', 'v#5', 'Sv#5', 'S#5'],
-        'temperament': ['w', 'd−', 'd+', 'w−', 'k', 'w+', 's', 'm', 'M', 'S', 'Z−', 'J', 'Z+', 'J−', 'J+', 'Z'],
-        'descriptive': ['subdiminished', 'subminor up-flat-5', 'diminished', 'subminor down-5',
-                        'minor down-5', 'down-5', 'subminor', 'minor', 'major', 'supermajor',
-                        'minor up-5', 'augmented', 'supermajor up-5', 'down-sharp-5',
-                        'supermajor down-sharp-5', 'supermajor sharp-5'],
-    },
-    note_name_systems={
-        'letters': ['C', 'D♭', '^D♭', 'vD', 'D', 'E♭', '^E♭', 'vE', 'E', 'F',
-                    '^F/G♭', 'vF♯/^G♭', 'F♯/vG', 'G', 'A♭', '^A♭', 'vA', 'A', 'B♭', '^B♭', 'vB', 'B'],
-        'letters_and_numbers': [f'{i} {name}' for i, name in enumerate(['C', 'D♭', '^D♭', 'vD', 'D', 'E♭', '^E♭', 'vE', 'E', 'F',
-                    '^F/G♭', 'vF♯/^G♭', 'F♯/vG', 'G', 'A♭', '^A♭', 'vA', 'A', 'B♭', '^B♭', 'vB', 'B'])],
-        'numbers': [str(i) for i in range(22)],
-    },
-    current_note_names='letters'
-)
+    Args:
+        filepath: Path to the edo_data.md file
 
-# 23-EDO system definition
-EDO_23 = EDOSystem(
-    edo=23,
-    interval_quality_list=['s','o','u','u','u','m','m','m','m','u','u','o','o','s','s','l','l','h','h','h','h','l','l'],
-    #                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22
-    #                      P1  m2  M2 3qt  Wt sm3 m3 nm3 M3 sM3  P4  A4  tt  P5 ^P5 m6 ^m6  M6 ^M6 n7  h7  m7  M7
-    leading_targets={15: 13, 16: 14, 21: 0, 22: 0},  # m6->P5, ^m6->^P5, m7->root, M7->root
-    dominant_leading_intervals={21, 22},  # m7 and M7 create dominant function
-    chord_intervals=[
-        (0, 5, 10),   # Subdiminished v5
-        (0, 5, 11),   # Subdiminished ^5
-        (0, 6, 11),   # Diminished v5
-        (0, 6, 12),   # Diminished ^5
-        (0, 5, 13),   # Subminor v5
-        (0, 5, 14),   # Subminor ^5
-        (0, 6, 13),   # Minor v5
-        (0, 6, 14),   # Minor ^5
-        (0, 7, 13),   # Major v5
-        (0, 7, 14),   # Major ^5
-        (0, 8, 13),   # Supermajor v5
-        (0, 8, 14),   # Supermajor ^5
-        (0, 7, 15),   # Augmented v5
-        (0, 7, 16),   # Augmented ^5
-        (0, 8, 15),   # Supermajor up5 v5
-        (0, 8, 16),   # Supermajor up5 ^5
-    ],
-    chord_notation_systems={
-        'full': ['subdim v5', 'subdim ^5', 'dim v5', 'dim ^5',
-                 'subminor v5', 'subminor ^5', 'minor v5', 'minor ^5',
-                 'major v5', 'major ^5', 'supermajor v5', 'supermajor ^5',
-                 'aug v5', 'aug ^5', 'supermajor #v5', 'supermajor #^5'],
-        'abbreviated': ['sd v5', 'sd ^5', 'dim v5', 'dim ^5', 's v5', 's ^5', 'm v5', 'm ^5',
-                       'M v5', 'M ^5', 'S v5', 'S ^5', 'aug v5', 'aug ^5', 'S #v5', 'S #^5'],
-        'symbols': ['sd↓', 'sd↑', 'd↓', 'd↑', 's↓', 's↑', 'm↓', 'm↑',
-                   'M↓', 'M↑', 'S↓', 'S↑', '+↓', '+↑', 'S+↓', 'S+↑'],
-    },
-    note_name_systems={
-        'letters': ['C', 'C♯', '^C♯', 'vD', 'D', 'D♯', '^D♯', 'vE♭', 'E♭', '^E♭', 'E', 'E♯',
-                    'F', 'F♯', '^F♯', 'vG♭', 'G♭', '^G♭', 'vG', 'G', 'A♭', '^A♭', 'vA'],
-        'letters_and_numbers': [f'{i} {name}' for i, name in enumerate(['C', 'C♯', '^C♯', 'vD', 'D', 'D♯', '^D♯', 'vE♭', 'E♭', '^E♭', 'E', 'E♯',
-                    'F', 'F♯', '^F♯', 'vG♭', 'G♭', '^G♭', 'vG', 'G', 'A♭', '^A♭', 'vA'])],
-        'numbers': [str(i) for i in range(23)],
-    },
-    current_note_names='numbers'
-)
+    Returns:
+        Dictionary mapping EDO numbers to EDOSystem instances
+    """
+    import re
+    import os
 
-# 31-EDO system definition (quarter-comma meantone)
-EDO_31 = EDOSystem(
-    edo=31,
-    interval_quality_list=['s','o','o','o','u','u','u','m','m','m','m','m','u','u','u','o','o','o','s','o','l','l','h','h','h','h','h','l','l','l','l'],
-    #                       0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30
-    #                      P1 d2  d2  m2  m2  M2  M2  m3  m3  m3  M3  M3  P4  P4  A4  A4  d5  d5  P5  d6  m6  m6  M6  M6  M6  m7  m7  m7  M7  M7  M7
-    leading_targets={20: 18, 21: 18, 27: 0, 28: 0, 29: 0, 30: 0},  # m6->P5, M7->root
-    dominant_leading_intervals={27, 28, 29, 30},  # M7 variants create dominant function
-    chord_intervals=[
-        (0, 7, 15),   # Diminished (meantone)
-        (0, 8, 15),   # Minor (meantone, small third)
-        (0, 8, 18),   # Minor (classic)
-        (0, 9, 18),   # Minor (large third)
-        (0, 9, 21),   # Minor augmented fifth
-        (0, 10, 18),  # Major (classic)
-        (0, 10, 21),  # Major augmented fifth
-        (0, 11, 18),  # Major (large third)
-        (0, 11, 21),  # Augmented
-    ],
-    chord_notation_systems={
-        'full': ['dim', 'min (small)', 'min', 'min (large)', 'min aug5', 'maj', 'maj aug5', 'maj (large)', 'aug'],
-        'standard': ['dim', 'm-', 'm', 'm+', 'm♯5', 'M', 'M♯5', 'M+', 'aug'],
-        'symbols': ['°', 'm-', 'm', 'm+', 'm♯5', 'M', 'M♯5', 'M+', '+'],
-    },
-    note_name_systems={
-        'letters': ['C', 'C♯', 'D♭♭', 'D♭', 'C♯♯', 'D', 'D♯', 'E♭♭', 'E♭', 'D♯♯', 'E', 'E♯',
-                    'F', 'F♯', 'G♭♭', 'G♭', 'F♯♯', 'G♭♭♭', 'G', 'G♯', 'A♭♭', 'A♭', 'G♯♯', 'A', 'A♯',
-                    'B♭♭', 'B♭', 'A♯♯', 'B', 'B♯', 'C♭'],
-        'letters_and_numbers': [f'{i} {name}' for i, name in enumerate([
-            'C', 'C♯', 'D♭♭', 'D♭', 'C♯♯', 'D', 'D♯', 'E♭♭', 'E♭', 'D♯♯', 'E', 'E♯',
-            'F', 'F♯', 'G♭♭', 'G♭', 'F♯♯', 'G♭♭♭', 'G', 'G♯', 'A♭♭', 'A♭', 'G♯♯', 'A', 'A♯',
-            'B♭♭', 'B♭', 'A♯♯', 'B', 'B♯', 'C♭'])],
-        'numbers': [str(i) for i in range(31)],
-    },
-    current_note_names='letters'
-)
+    # If filepath is relative, make it relative to this script's directory
+    if not os.path.isabs(filepath):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        filepath = os.path.join(script_dir, filepath)
+
+    with open(filepath, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    edo_systems = {}
+
+    # Split by EDO sections
+    edo_sections = re.split(r'\n---\n', content)
+
+    for section in edo_sections:
+        if not section.strip() or '## EDO' not in section:
+            continue
+
+        # Extract EDO number
+        edo_match = re.search(r'## EDO (\d+)', section)
+        if not edo_match:
+            continue
+        edo_num = int(edo_match.group(1))
+
+        # Extract current note names
+        current_note_names_match = re.search(r'\*\*Current Note Names\*\*:\s*(\w+)', section)
+        current_note_names = current_note_names_match.group(1) if current_note_names_match else 'default'
+
+        # Extract interval quality list
+        quality_match = re.search(r'### Interval Quality List\n```\n(.*?)\n```', section, re.DOTALL)
+        if not quality_match:
+            continue
+        quality_str = quality_match.group(1).strip()
+        interval_quality_list = [q.strip() for q in quality_str.split(',')]
+
+        # Extract leading targets
+        leading_targets = {}
+        leading_match = re.search(r'### Leading Targets\n```\n(.*?)\n```', section, re.DOTALL)
+        if leading_match:
+            for line in leading_match.group(1).strip().split('\n'):
+                if ':' in line:
+                    parts = line.split('#')[0].strip()  # Remove comment
+                    if ':' in parts:
+                        key, val = parts.split(':')
+                        leading_targets[int(key.strip())] = int(val.strip())
+
+        # Extract dominant leading intervals
+        dominant_leading_intervals = set()
+        dom_match = re.search(r'### Dominant Leading Intervals\n```\n(.*?)\n```', section, re.DOTALL)
+        if dom_match:
+            for line in dom_match.group(1).strip().split('\n'):
+                if line.strip() and not line.strip().startswith('#'):
+                    num_match = re.match(r'(\d+)', line.strip())
+                    if num_match:
+                        dominant_leading_intervals.add(int(num_match.group(1)))
+
+        # Extract chord intervals
+        chord_intervals = []
+        chord_match = re.search(r'### Chord Intervals\n```\n(.*?)\n```', section, re.DOTALL)
+        if chord_match:
+            for line in chord_match.group(1).strip().split('\n'):
+                if line.strip():
+                    # Extract numbers before the # comment
+                    parts = line.split('#')[0].strip()
+                    if parts:
+                        intervals = tuple(int(x.strip()) for x in parts.split(','))
+                        chord_intervals.append(intervals)
+
+        # Extract chord notation systems
+        chord_notation_systems = {}
+        notation_matches = re.finditer(r'### Chord Notation: (\w+)\n```\n(.*?)\n```', section, re.DOTALL)
+        for match in notation_matches:
+            system_name = match.group(1)
+            notations = [n.strip() for n in match.group(2).strip().split('\n')]
+            chord_notation_systems[system_name] = notations
+
+        # Extract note name systems
+        note_name_systems = {}
+        note_matches = re.finditer(r'### Note Names: (\w+)\n```\n(.*?)\n```', section, re.DOTALL)
+        for match in note_matches:
+            system_name = match.group(1)
+            notes_str = match.group(2).strip()
+            notes = [n.strip() for n in notes_str.split(',')]
+            note_name_systems[system_name] = notes
+
+        # Handle special case for 'numbers' system if not present
+        if 'numbers' not in note_name_systems:
+            note_name_systems['numbers'] = [str(i) for i in range(edo_num)]
+
+        # Create EDO system
+        edo_system = EDOSystem(
+            edo=edo_num,
+            interval_quality_list=interval_quality_list,
+            leading_targets=leading_targets,
+            dominant_leading_intervals=dominant_leading_intervals,
+            chord_intervals=chord_intervals,
+            chord_notation_systems=chord_notation_systems,
+            note_name_systems=note_name_systems,
+            current_notation='full',
+            current_note_names=current_note_names
+        )
+
+        edo_systems[edo_num] = edo_system
+
+    return edo_systems
+
+
+# Load EDO systems from data file
+_EDO_SYSTEMS = parse_edo_data_file('edo_data.md')
+EDO_12 = _EDO_SYSTEMS[12]
+EDO_22 = _EDO_SYSTEMS[22]
+EDO_23 = _EDO_SYSTEMS[23]
+EDO_31 = _EDO_SYSTEMS[31]
 
 
 def classify_chord(intervals: Set[int], system: EDOSystem) -> Function:
@@ -1082,6 +1042,7 @@ def generate_html_table(system: EDOSystem = None, filename: str = None) -> str:
             justify-content: space-between;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
         }}
         .chord-history-item:hover {{
             background: linear-gradient(135deg, rgba(109, 40, 217, 0.4), rgba(88, 28, 135, 0.4));
@@ -1166,6 +1127,20 @@ def generate_html_table(system: EDOSystem = None, filename: str = None) -> str:
         td.scale-match .func {{
             border-color: rgba(34, 197, 94, 0.6);
             box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4), inset 0 -2px 8px rgba(0, 0, 0, 0.2);
+        }}
+        .func.playing {{
+            animation: pulseGlow 0.6s ease-in-out 3;
+            border-color: rgba(255, 255, 255, 0.8) !important;
+        }}
+        @keyframes pulseGlow {{
+            0%, 100% {{
+                transform: scale(1);
+                box-shadow: 0 4px 16px rgba(255, 255, 255, 0.3);
+            }}
+            50% {{
+                transform: scale(1.2);
+                box-shadow: 0 8px 32px rgba(255, 255, 255, 0.8);
+            }}
         }}
     </style>
 </head>
@@ -1633,6 +1608,10 @@ def generate_html_table(system: EDOSystem = None, filename: str = None) -> str:
                     </div>
                     <span class="chord-history-delete" data-index="${{index}}">×</span>
                 `;
+                item.setAttribute('data-intervals', chord.intervals.join(','));
+                item.setAttribute('data-root', chord.root);
+                item.setAttribute('data-chord-index', chord.chordIndex);
+                item.setAttribute('data-edo', edo);
                 historyList.appendChild(item);
             }});
 
@@ -1643,6 +1622,42 @@ def generate_html_table(system: EDOSystem = None, filename: str = None) -> str:
                     const index = parseInt(this.getAttribute('data-index'));
                     chordHistory.splice(index, 1);
                     updateHistoryDisplay();
+                }});
+            }});
+
+            // Add click handlers to replay chord and highlight on grid
+            document.querySelectorAll('.chord-history-item').forEach(item => {{
+                item.addEventListener('click', function(e) {{
+                    // Don't trigger if clicking the delete button
+                    if (e.target.classList.contains('chord-history-delete')) {{
+                        return;
+                    }}
+
+                    const intervalsStr = this.getAttribute('data-intervals');
+                    const edo = parseInt(this.getAttribute('data-edo'));
+                    const intervals = intervalsStr.split(',').map(x => parseInt(x));
+                    const root = this.getAttribute('data-root');
+                    const chordIndex = this.getAttribute('data-chord-index');
+
+                    // Resume audio context if needed
+                    if (audioContext.state === 'suspended') {{
+                        audioContext.resume();
+                    }}
+
+                    // Play the chord
+                    playChord(intervals, edo);
+
+                    // Highlight the chord on the grid
+                    const gridChord = document.querySelector(`.func.clickable[data-root="${{root}}"][data-chord-index="${{chordIndex}}"]`);
+                    if (gridChord) {{
+                        // Add playing animation
+                        gridChord.classList.add('playing');
+
+                        // Remove after animation completes (0.6s * 3 = 1.8s)
+                        setTimeout(() => {{
+                            gridChord.classList.remove('playing');
+                        }}, 1800);
+                    }}
                 }});
             }});
         }}
