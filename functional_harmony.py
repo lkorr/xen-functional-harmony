@@ -47,6 +47,10 @@ class EDOSystem:
                       'u': Quality.UNSTABLE, 'l': Quality.LEADING, 'o': Quality.ODD}
         self.interval_qualities = {i: quality_map[q] for i, q in enumerate(self.interval_quality_list)}
 
+        # Find the perfect fifth (interval closest to 702 cents)
+        cent_per_step = 1200.0 / self.edo
+        self.perfect_fifth = min(range(self.edo), key=lambda i: abs(i * cent_per_step - 702))
+
         # Validate notation systems match chord intervals
         for system_name, notations in self.chord_notation_systems.items():
             if len(notations) != len(self.chord_intervals):
@@ -241,7 +245,7 @@ def classify_chord(intervals: Set[int], system: EDOSystem) -> Function:
     1. DOMINANT: Has ACTIVE dominant leading AND (has unstable OR dominant shell)
     2. PREDOMINANT: Has unstable interval AND no active dominant leading
     3. MEDIANT: No unstable AND (has ACTIVE leading OR has hollow OR has odd)
-    4. TONIC: No unstable AND no active leading AND no hollow AND no odd AND contains root (0)
+    4. TONIC: No unstable AND no active leading AND no hollow AND no odd AND contains root (0) AND perfect fifth
     5. PREDOMINANT (fallback): Otherwise
     """
     has_u = system.has_quality(intervals, Quality.UNSTABLE)
@@ -274,10 +278,12 @@ def classify_chord(intervals: Set[int], system: EDOSystem) -> Function:
         return Function.PREDOMINANT
     if not has_u and (has_active_l or has_h or has_o):
         return Function.MEDIANT
-    # Rule 4: TONIC requires the chord to contain the root (interval 0)
-    if 0 in intervals:
+    # Rule 4: TONIC requires the chord to contain root (0) AND perfect fifth (closest to 702c)
+    # Normalize intervals to check for perfect fifth
+    intervals_mod = {i % system.edo for i in intervals}
+    if 0 in intervals and system.perfect_fifth in intervals_mod:
         return Function.TONIC
-    # Rule 5: Fallback to PREDOMINANT for chords without root
+    # Rule 5: Fallback to PREDOMINANT for chords without root or without perfect fifth
     return Function.PREDOMINANT
 
 
