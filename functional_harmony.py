@@ -222,9 +222,15 @@ def parse_edo_data_file(filepath: str) -> Dict[int, EDOSystem]:
 # Load EDO systems from data file
 _EDO_SYSTEMS = parse_edo_data_file('edo_data.md')
 EDO_12 = _EDO_SYSTEMS[12]
+EDO_15 = _EDO_SYSTEMS[15]
+EDO_17 = _EDO_SYSTEMS[17]
+EDO_19 = _EDO_SYSTEMS[19]
+EDO_20 = _EDO_SYSTEMS[20]
 EDO_22 = _EDO_SYSTEMS[22]
 EDO_23 = _EDO_SYSTEMS[23]
+EDO_26 = _EDO_SYSTEMS[26]
 EDO_31 = _EDO_SYSTEMS[31]
+EDO_53 = _EDO_SYSTEMS[53]
 
 
 def classify_chord(intervals: Set[int], system: EDOSystem) -> Function:
@@ -235,7 +241,8 @@ def classify_chord(intervals: Set[int], system: EDOSystem) -> Function:
     1. DOMINANT: Has ACTIVE dominant leading AND (has unstable OR dominant shell)
     2. PREDOMINANT: Has unstable interval AND no active dominant leading
     3. MEDIANT: No unstable AND (has ACTIVE leading OR has hollow OR has odd)
-    4. TONIC: No unstable AND no active leading AND no hollow AND no odd
+    4. TONIC: No unstable AND no active leading AND no hollow AND no odd AND contains root (0)
+    5. PREDOMINANT (fallback): Otherwise
     """
     has_u = system.has_quality(intervals, Quality.UNSTABLE)
     has_h = system.has_quality(intervals, Quality.HOLLOW)
@@ -267,7 +274,11 @@ def classify_chord(intervals: Set[int], system: EDOSystem) -> Function:
         return Function.PREDOMINANT
     if not has_u and (has_active_l or has_h or has_o):
         return Function.MEDIANT
-    return Function.TONIC
+    # Rule 4: TONIC requires the chord to contain the root (interval 0)
+    if 0 in intervals:
+        return Function.TONIC
+    # Rule 5: Fallback to PREDOMINANT for chords without root
+    return Function.PREDOMINANT
 
 
 def analyze_chord(intervals: Set[int], system: EDOSystem, name: str = "") -> Dict:
@@ -401,18 +412,19 @@ def run_tests():
 
 
 def get_root_names(edo: int, system: EDOSystem = None) -> List[Tuple[int, str]]:
-    """Generate root names for a given EDO."""
-    if edo == 12:
-        return [(0, 'I'), (1, 'bII'), (2, 'II'), (3, 'bIII'), (4, 'III'), (5, 'IV'),
-                (6, '#IV'), (7, 'V'), (8, 'bVI'), (9, 'VI'), (10, 'bVII'), (11, 'VII')]
-    elif system is not None:
-        # Use note names from the system
-        note_names = system.get_note_names()
-        step_size = 1200.0 / edo
-        return [(i, f"{note_names[i]}") for i in range(edo)]
-    # For all other EDOs without a system, use step numbers with cent values
+    """Generate root names for a given EDO with cent values."""
     step_size = 1200.0 / edo
-    return [(i, f"{i} ({i * step_size:.1f}¢)") for i in range(edo)]
+
+    if edo == 12:
+        # For 12-EDO, use Roman numerals with cent values
+        names = ['I', 'bII', 'II', 'bIII', 'III', 'IV', '#IV', 'V', 'bVI', 'VI', 'bVII', 'VII']
+        return [(i, f"{names[i]} ({i * step_size:.0f}¢)") for i in range(edo)]
+    elif system is not None:
+        # Use note names from the system with cent values
+        note_names = system.get_note_names()
+        return [(i, f"{note_names[i]} ({i * step_size:.0f}¢)") for i in range(edo)]
+    # For all other EDOs without a system, use step numbers with cent values
+    return [(i, f"{i} ({i * step_size:.0f}¢)") for i in range(edo)]
 
 
 def print_triad_table(system: EDOSystem = None):
@@ -1915,6 +1927,250 @@ def generate_html_table(system: EDOSystem = None, filename: str = None) -> str:
     return html
 
 
+def generate_interval_quality_list(edo: int) -> List[str]:
+    """
+    Generate an interval quality list for a given EDO based on cent ranges.
+
+    Rules:
+    - 0 cents (root): 's' (stable)
+    - 0-160c: 'o' (odd/dissonant)
+    - 160-255c: 'u' (unstable)
+    - 255-440c: 'm' (modal)
+    - 440-560c: 'u' (unstable)
+    - 560-665c: 'o' (odd/dissonant)
+    - 665-735c: 's' (stable)
+    - 735-850c: 'l' (leading)
+    - 850-1040c: 'h' (hollow)
+    - 1040-1200c: 'l' (leading)
+
+    Args:
+        edo: The equal division of the octave
+
+    Returns:
+        List of quality strings, one for each step of the EDO
+    """
+    cent_per_step = 1200.0 / edo
+    qualities = []
+
+    for step in range(edo):
+        cents = step * cent_per_step
+
+        if step == 0:
+            quality = 's'
+        elif 0 < cents < 160:
+            quality = 'o'
+        elif 160 <= cents < 255:
+            quality = 'u'
+        elif 255 <= cents < 440:
+            quality = 'm'
+        elif 440 <= cents < 560:
+            quality = 'u'
+        elif 560 <= cents < 665:
+            quality = 'o'
+        elif 665 <= cents < 735:
+            quality = 's'
+        elif 735 <= cents < 850:
+            quality = 'l'
+        elif 850 <= cents < 1040:
+            quality = 'h'
+        elif 1040 <= cents < 1200:
+            quality = 'l'
+        else:  # Should not happen for valid EDO
+            quality = 's'
+
+        qualities.append(quality)
+
+    return qualities
+
+
+def print_interval_quality_list(edo: int):
+    """
+    Generate and print an interval quality list for a given EDO in a format
+    that can be added to edo_data.md.
+
+    Args:
+        edo: The equal division of the octave
+    """
+    qualities = generate_interval_quality_list(edo)
+    cent_per_step = 1200.0 / edo
+
+    print(f"\n## EDO {edo}")
+    print(f"**Current Note Names**: default")
+    print(f"\n### Interval Quality List")
+    print("```")
+    print(", ".join(qualities))
+    print("```")
+
+    # Print detailed breakdown showing cents for each interval
+    print(f"\n### Interval Quality Breakdown (for reference)")
+    print("```")
+    for step, quality in enumerate(qualities):
+        cents = step * cent_per_step
+        quality_name = {
+            's': 'stable',
+            'o': 'odd',
+            'u': 'unstable',
+            'm': 'modal',
+            'l': 'leading',
+            'h': 'hollow'
+        }[quality]
+        print(f"{step:3d}: {cents:7.2f}¢ -> {quality} ({quality_name})")
+    print("```")
+
+
+def sort_chord_intervals_by_fifth_then_third(chord_lines: List[str]) -> List[str]:
+    """
+    Sort chord interval lines by fifth (third number) then by third (second number).
+
+    Takes lines in format: "0, 7, 15   # Comment" and sorts them so that:
+    1. Chords are grouped by the fifth (third number in the tuple)
+    2. Within each fifth group, sorted by the third (second number in the tuple)
+
+    Args:
+        chord_lines: List of chord interval lines from edo_data.md
+
+    Returns:
+        Sorted list of chord interval lines
+    """
+    import re
+
+    # Parse each line to extract intervals and comment
+    parsed_chords = []
+    for line in chord_lines:
+        line = line.strip()
+        if not line or line.startswith('#'):
+            continue
+
+        # Extract the interval numbers and comment
+        match = re.match(r'(\d+),\s*(\d+),\s*(\d+)\s*(#.*)?', line)
+        if match:
+            root = int(match.group(1))
+            third = int(match.group(2))
+            fifth = int(match.group(3))
+            comment = match.group(4) if match.group(4) else ''
+            parsed_chords.append((root, third, fifth, comment.strip(), line))
+
+    # Sort by fifth (index 2), then by third (index 1)
+    sorted_chords = sorted(parsed_chords, key=lambda x: (x[2], x[1]))
+
+    # Reconstruct the lines
+    result = []
+    for root, third, fifth, comment, original_line in sorted_chords:
+        # Format consistently
+        if comment:
+            result.append(f"{root}, {third}, {fifth}   {comment}")
+        else:
+            result.append(f"{root}, {third}, {fifth}")
+
+    return result
+
+
+def print_sorted_chord_intervals(chord_lines: List[str]):
+    """
+    Print sorted chord intervals for easy copy-paste into edo_data.md.
+
+    Args:
+        chord_lines: List of chord interval lines from edo_data.md
+    """
+    sorted_lines = sort_chord_intervals_by_fifth_then_third(chord_lines)
+    print("### Chord Intervals")
+    print("```")
+    for line in sorted_lines:
+        print(line)
+    print("```")
+
+
+def generate_all_triads(edo: int, qualities: List[str] = None) -> List[Tuple[int, int, int]]:
+    """
+    Generate all possible triads from available thirds in an EDO.
+
+    A triad consists of: root (0), third (modal interval), fifth (two stacked thirds).
+    This function finds all intervals marked as 'm' (modal/thirds) and generates
+    all permutations where the fifth is the sum of two thirds (which may be different).
+
+    For example, with thirds [7, 8, 9, 10, 11], it generates:
+    - (0, 7, 14)  # third=7, fifth=7+7
+    - (0, 7, 15)  # third=7, fifth=7+8
+    - (0, 7, 16)  # third=7, fifth=7+9
+    - etc.
+
+    Args:
+        edo: The equal division of the octave
+        qualities: Optional list of interval qualities. If None, generates from edo.
+
+    Returns:
+        List of triad tuples (0, third, fifth), sorted by fifth then third
+    """
+    if qualities is None:
+        qualities = generate_interval_quality_list(edo)
+
+    # Find all thirds (modal intervals)
+    thirds = [i for i, q in enumerate(qualities) if q == 'm' and i > 0]
+
+    # Generate all triads by stacking two thirds
+    triads = []
+    for third1 in thirds:
+        for third2 in thirds:
+            fifth = (third1 + third2) % edo
+            # Create triad: root (0), third (third1), fifth (sum of two thirds)
+            triads.append((0, third1, fifth))
+
+    # Sort by fifth, then by third
+    triads.sort(key=lambda x: (x[2], x[1]))
+
+    return triads
+
+
+def print_generated_triads(edo: int, qualities: List[str] = None):
+    """
+    Generate and print all possible triads for an EDO system.
+
+    Args:
+        edo: The equal division of the octave
+        qualities: Optional list of interval qualities. If None, generates from edo.
+    """
+    if qualities is None:
+        qualities = generate_interval_quality_list(edo)
+
+    triads = generate_all_triads(edo, qualities)
+    cent_per_step = 1200.0 / edo
+
+    # Find the thirds used
+    thirds = sorted(set(t[1] for t in triads))
+    unique_triads = []
+    seen = set()
+    for triad in triads:
+        if triad not in seen:
+            unique_triads.append(triad)
+            seen.add(triad)
+
+    print(f"\n### Generated Triads for {edo}-EDO")
+    print(f"Found {len(unique_triads)} unique triads ({len(thirds)} thirds × {len(thirds)} thirds = {len(thirds)**2} permutations)\n")
+
+    print(f"Thirds (modal 'm' intervals): {thirds}")
+    print(f"  Cents: {[f'{t * cent_per_step:.1f}¢' for t in thirds]}")
+
+    print(f"\n### Chord Intervals")
+    print("```")
+    for root, third1, fifth in unique_triads:
+        third1_cents = third1 * cent_per_step
+        fifth_cents = fifth * cent_per_step
+
+        # Find which two thirds make up this fifth
+        thirds_list = [i for i, q in enumerate(qualities) if q == 'm' and i > 0]
+        third2 = None
+        for t2 in thirds_list:
+            if (third1 + t2) % edo == fifth:
+                third2 = t2
+                break
+
+        if third2 is not None:
+            print(f"{root}, {third1}, {fifth}   # {third1_cents:.1f}¢ + {third2 * cent_per_step:.1f}¢ = {fifth_cents:.1f}¢")
+        else:
+            print(f"{root}, {third1}, {fifth}   # {third1_cents:.1f}¢ + ? = {fifth_cents:.1f}¢")
+    print("```")
+
+
 def run_22edo_tests():
     """Run test cases for 22-EDO."""
     print("=" * 110)
@@ -1946,7 +2202,15 @@ if __name__ == "__main__":
     # Choose which system to test
     import sys
 
-    if len(sys.argv) > 1 and sys.argv[1] == "22":
+    if len(sys.argv) > 1 and sys.argv[1] == "--generate-html":
+        # Generate HTML tables for all EDO systems
+        print("Generating HTML tables from edo_data.md...")
+        edo_systems = parse_edo_data_file('edo_data.md')
+        for edo_num, system in sorted(edo_systems.items()):
+            filename = f'{edo_num}edo_table.html'
+            generate_html_table(system, filename)
+        print("\nAll HTML tables generated successfully!")
+    elif len(sys.argv) > 1 and sys.argv[1] == "22":
         # Run 22-EDO tests
         run_22edo_tests()
         print("\n\n")

@@ -1245,3 +1245,160 @@ sM^##5
 ssM^##5
 ssM
 ```
+
+### Note Names: numbers
+```
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52
+```
+
+---
+
+## EDO 27
+**Current Note Names**: numbers
+
+### Interval Quality List
+```
+s, o, o, o, u, u, m, m, m, m, u, u, u, o, o, s, s, l, l, l, h, h, h, h, l, l, l
+```
+
+### Leading Targets
+```
+19: 18  # M6->P5
+25: 0   # m7->root
+26: 0   # M7->root
+```
+
+### Dominant Leading Intervals
+```
+25  # m7 creates dominant function
+26  # M7 creates dominant function
+```
+
+### Chord Intervals
+```
+0, 6, 12   # subminor subdiminished
+0, 6, 13   # subminor subminor up-flat-5
+0, 6, 14   # subminor neutral-diminished
+0, 6, 15   # subminor down-5
+0, 6, 16   # subminor perfect
+0, 7, 13   # minor subminor up-flat-5
+0, 7, 14   # minor neutral-diminished
+0, 7, 15   # minor down-5
+0, 7, 16   # minor perfect
+0, 7, 17   # minor up-5
+0, 8, 14   # neutral neutral-diminished
+0, 8, 15   # neutral down-5
+0, 8, 16   # neutral perfect
+0, 8, 17   # neutral up-5
+0, 8, 18   # neutral neutral-augmented
+0, 9, 15   # major down-5
+0, 9, 16   # major perfect
+0, 9, 17   # major up-5
+0, 9, 18   # major neutral-augmented
+0, 9, 19   # major down-sharp-5
+0, 10, 16   # supermajor perfect
+0, 10, 17   # supermajor up-5
+0, 10, 18   # supermajor neutral-augmented
+0, 10, 19   # supermajor down-sharp-5
+0, 10, 20   # supermajor sharp-5
+```
+
+### Chord Notation: full
+```
+dim= (dim=)
+dim- (dim-)
+msh- (o-)
+mav- (l-)
+sub (s)
+dim+ (dim+)
+dim (dim)
+arc- (r-)
+min (m)
+mac- (i-)
+msh+ (o+)
+arc+ (r+)
+neu (n)
+dic- (k-)
+hyr- (h-)
+mav+ (l+)
+maj (M)
+hyr+ (h+)
+aug (aug)
+dic+ (k+)
+sup (S)
+mac+ (i+)
+dic (k)
+hyr (h)
+mac (i)
+```
+
+### Chord Notation: standard
+```
+dim=
+dim-
+msh-
+mav-
+sub
+dim+
+dim
+arc-
+min
+mac-
+msh+
+arc+
+neu
+dic-
+hyr-
+mav+
+maj
+hyr+
+aug
+dic+
+sup
+mac+
+dic
+hyr
+mac
+```
+
+### Chord Notation: temperament
+```
+dim=
+dim-
+o-
+l-
+s
+dim+
+dim
+r-
+m
+i-
+o+
+r+
+n
+k-
+h-
+l+
+M
+h+
+aug
+k+
+S
+i+
+k
+h
+i
+```
+
+### Note Names: numbers
+```
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+```
+
+### Note Names: letters
+```
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+```
+
+---
+
