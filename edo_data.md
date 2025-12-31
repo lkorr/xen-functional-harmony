@@ -1258,7 +1258,7 @@ ssM
 
 ### Interval Quality List
 ```
-s, o, o, o, u, u, m, m, m, m, u, u, u, o, o, s, s, l, l, l, h, h, h, h, l, l, l
+s, o, o, o, u, u, m, m, m, m, m, u, u, o, o, s, s, l, l, l, h, h, h, h, l, l, l
 ```
 
 ### Leading Targets

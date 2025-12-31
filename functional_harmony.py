@@ -1941,8 +1941,8 @@ def generate_interval_quality_list(edo: int) -> List[str]:
     - 0 cents (root): 's' (stable)
     - 0-160c: 'o' (odd/dissonant)
     - 160-255c: 'u' (unstable)
-    - 255-440c: 'm' (modal)
-    - 440-560c: 'u' (unstable)
+    - 255-445c: 'm' (modal)
+    - 445-560c: 'u' (unstable)
     - 560-665c: 'o' (odd/dissonant)
     - 665-735c: 's' (stable)
     - 735-850c: 'l' (leading)
@@ -1967,9 +1967,9 @@ def generate_interval_quality_list(edo: int) -> List[str]:
             quality = 'o'
         elif 160 <= cents < 255:
             quality = 'u'
-        elif 255 <= cents < 440:
+        elif 255 <= cents < 445:
             quality = 'm'
-        elif 440 <= cents < 560:
+        elif 445 <= cents < 560:
             quality = 'u'
         elif 560 <= cents < 665:
             quality = 'o'
