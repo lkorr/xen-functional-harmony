@@ -1278,27 +1278,27 @@ s, o, o, o, u, u, m, m, m, m, u, u, u, o, o, s, s, l, l, l, h, h, h, h, l, l, l
 ```
 0, 6, 12   # subminor subdiminished
 0, 6, 13   # subminor subminor up-flat-5
-0, 6, 14   # subminor neutral-diminished
-0, 6, 15   # subminor down-5
-0, 6, 16   # subminor perfect
 0, 7, 13   # minor subminor up-flat-5
+0, 6, 14   # subminor neutral-diminished
 0, 7, 14   # minor neutral-diminished
-0, 7, 15   # minor down-5
-0, 7, 16   # minor perfect
-0, 7, 17   # minor up-5
 0, 8, 14   # neutral neutral-diminished
+0, 6, 15   # subminor down-5
+0, 7, 15   # minor down-5
 0, 8, 15   # neutral down-5
-0, 8, 16   # neutral perfect
-0, 8, 17   # neutral up-5
-0, 8, 18   # neutral neutral-augmented
 0, 9, 15   # major down-5
+0, 6, 16   # subminor perfect
+0, 7, 16   # minor perfect
+0, 8, 16   # neutral perfect
 0, 9, 16   # major perfect
-0, 9, 17   # major up-5
-0, 9, 18   # major neutral-augmented
-0, 9, 19   # major down-sharp-5
 0, 10, 16   # supermajor perfect
+0, 7, 17   # minor up-5
+0, 8, 17   # neutral up-5
+0, 9, 17   # major up-5
 0, 10, 17   # supermajor up-5
+0, 8, 18   # neutral neutral-augmented
+0, 9, 18   # major neutral-augmented
 0, 10, 18   # supermajor neutral-augmented
+0, 9, 19   # major down-sharp-5
 0, 10, 19   # supermajor down-sharp-5
 0, 10, 20   # supermajor sharp-5
 ```
@@ -1307,27 +1307,27 @@ s, o, o, o, u, u, m, m, m, m, u, u, u, o, o, s, s, l, l, l, h, h, h, h, l, l, l
 ```
 dim= (dim=)
 dim- (dim-)
-msh- (o-)
-mav- (l-)
-sub (s)
 dim+ (dim+)
+msh- (o-)
 dim (dim)
-arc- (r-)
-min (m)
-mac- (i-)
 msh+ (o+)
+mav- (l-)
+arc- (r-)
 arc+ (r+)
-neu (n)
-dic- (k-)
-hyr- (h-)
 mav+ (l+)
+sub (s)
+min (m)
+neu (n)
 maj (M)
-hyr+ (h+)
-aug (aug)
-dic+ (k+)
 sup (S)
+mac- (i-)
+dic- (k-)
+hyr+ (h+)
 mac+ (i+)
+hyr- (h-)
+aug (aug)
 dic (k)
+dic+ (k+)
 hyr (h)
 mac (i)
 ```
@@ -1336,27 +1336,27 @@ mac (i)
 ```
 dim=
 dim-
-msh-
-mav-
-sub
 dim+
+msh-
 dim
-arc-
-min
-mac-
 msh+
+mav-
+arc-
 arc+
-neu
-dic-
-hyr-
 mav+
+sub
+min
+neu
 maj
-hyr+
-aug
-dic+
 sup
+mac-
+dic-
+hyr+
 mac+
+hyr-
+aug
 dic
+dic+
 hyr
 mac
 ```
@@ -1365,27 +1365,27 @@ mac
 ```
 dim=
 dim-
-o-
-l-
-s
 dim+
+o-
 dim
-r-
-m
-i-
 o+
+l-
+r-
 r+
-n
-k-
-h-
 l+
+s
+m
+n
 M
-h+
-aug
-k+
 S
+i-
+k-
+h+
 i+
+h-
+aug
 k
+k+
 h
 i
 ```

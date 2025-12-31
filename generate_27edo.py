@@ -5,32 +5,31 @@ from functional_harmony import generate_interval_quality_list
 qualities = generate_interval_quality_list(27)
 
 # Manually specify all triads from 27edo triads.txt
-# The auto-generation misses supermajor thirds (step 10) since they fall just outside
-# the modal range (444.44c is > 440c threshold)
+# Ordered by fifth (12, 13, 14, 15, 16, 17, 18, 19, 20) to group chords with the same fifth
 triads = [
     (0, 6, 12),   # ss - subminor + subminor
     (0, 6, 13),   # sm - subminor + minor
-    (0, 6, 14),   # sn - subminor + neutral
-    (0, 6, 15),   # sM - subminor + major
-    (0, 6, 16),   # sS - subminor + supermajor
     (0, 7, 13),   # ms - minor + subminor
+    (0, 6, 14),   # sn - subminor + neutral
     (0, 7, 14),   # mm - minor + minor
-    (0, 7, 15),   # mn - minor + neutral
-    (0, 7, 16),   # mM - minor + major
-    (0, 7, 17),   # mS - minor + supermajor
     (0, 8, 14),   # ns - neutral + subminor
+    (0, 6, 15),   # sM - subminor + major
+    (0, 7, 15),   # mn - minor + neutral
     (0, 8, 15),   # nm - neutral + minor
-    (0, 8, 16),   # nn - neutral + neutral
-    (0, 8, 17),   # nM - neutral + major
-    (0, 8, 18),   # nS - neutral + supermajor
     (0, 9, 15),   # Ms - major + subminor
+    (0, 6, 16),   # sS - subminor + supermajor
+    (0, 7, 16),   # mM - minor + major
+    (0, 8, 16),   # nn - neutral + neutral
     (0, 9, 16),   # Mm - major + minor
-    (0, 9, 17),   # Mn - major + neutral
-    (0, 9, 18),   # MM - major + major
-    (0, 9, 19),   # MS - major + supermajor
     (0, 10, 16),  # Ss - supermajor + subminor
+    (0, 7, 17),   # mS - minor + supermajor
+    (0, 8, 17),   # nM - neutral + major
+    (0, 9, 17),   # Mn - major + neutral
     (0, 10, 17),  # Sm - supermajor + minor
+    (0, 8, 18),   # nS - neutral + supermajor
+    (0, 9, 18),   # MM - major + major
     (0, 10, 18),  # Sn - supermajor + neutral
+    (0, 9, 19),   # MS - major + supermajor
     (0, 10, 19),  # SM - supermajor + major
     (0, 10, 20),  # SS - supermajor + supermajor
 ]
@@ -61,59 +60,61 @@ fifth_info = {
 
 # Chord names from 27edo triads.txt
 # Based on /temp/ column (temperament notation)
+# Ordered by fifth to match the triads array
 temperament_names = [
     'dim=',   # ss: 0, 6, 12
     'dim-',   # sm: 0, 6, 13
-    'o-',     # sn: 0, 6, 14
-    'l-',     # sM: 0, 6, 15
-    's',      # sS: 0, 6, 16
     'dim+',   # ms: 0, 7, 13
+    'o-',     # sn: 0, 6, 14
     'dim',    # mm: 0, 7, 14
-    'r-',     # mn: 0, 7, 15
-    'm',      # mM: 0, 7, 16
-    'i-',     # mS: 0, 7, 17
     'o+',     # ns: 0, 8, 14
+    'l-',     # sM: 0, 6, 15
+    'r-',     # mn: 0, 7, 15
     'r+',     # nm: 0, 8, 15
-    'n',      # nn: 0, 8, 16
-    'k-',     # nM: 0, 8, 17
-    'h-',     # nS: 0, 8, 18
     'l+',     # Ms: 0, 9, 15
+    's',      # sS: 0, 6, 16
+    'm',      # mM: 0, 7, 16
+    'n',      # nn: 0, 8, 16
     'M',      # Mm: 0, 9, 16
-    'h+',     # Mn: 0, 9, 17
-    'aug',    # MM: 0, 9, 18
-    'k+',     # MS: 0, 9, 19
     'S',      # Ss: 0, 10, 16
+    'i-',     # mS: 0, 7, 17
+    'k-',     # nM: 0, 8, 17
+    'h+',     # Mn: 0, 9, 17
     'i+',     # Sm: 0, 10, 17
+    'h-',     # nS: 0, 8, 18
+    'aug',    # MM: 0, 9, 18
     'k',      # Sn: 0, 10, 18
+    'k+',     # MS: 0, 9, 19
     'h',      # SM: 0, 10, 19
     'i'       # SS: 0, 10, 20
 ]
 
 # Based on /alt/ column (descriptive names)
+# Ordered by fifth to match the triads array
 descriptive_names = [
     'dim=',    # ss: 0, 6, 12
     'dim-',    # sm: 0, 6, 13
-    'msh-',    # sn: 0, 6, 14 - mosh minor
-    'mav-',    # sM: 0, 6, 15 - mavila minor
-    'sub',     # sS: 0, 6, 16 - subminor
     'dim+',    # ms: 0, 7, 13
+    'msh-',    # sn: 0, 6, 14 - mosh minor
     'dim',     # mm: 0, 7, 14
-    'arc-',    # mn: 0, 7, 15 - archaeminor
-    'min',     # mM: 0, 7, 16
-    'mac-',    # mS: 0, 7, 17 - machminor
     'msh+',    # ns: 0, 8, 14 - mosh major
+    'mav-',    # sM: 0, 6, 15 - mavila minor
+    'arc-',    # mn: 0, 7, 15 - archaeminor
     'arc+',    # nm: 0, 8, 15 - archaemajor
-    'neu',     # nn: 0, 8, 16 - neutral
-    'dic-',    # nM: 0, 8, 17 - dicoid minor
-    'hyr-',    # nS: 0, 8, 18 - hyrulic minor
     'mav+',    # Ms: 0, 9, 15 - mavila major
+    'sub',     # sS: 0, 6, 16 - subminor
+    'min',     # mM: 0, 7, 16
+    'neu',     # nn: 0, 8, 16 - neutral
     'maj',     # Mm: 0, 9, 16
-    'hyr+',    # Mn: 0, 9, 17 - hyrulic major
-    'aug',     # MM: 0, 9, 18
-    'dic+',    # MS: 0, 9, 19 - superdicoid
     'sup',     # Ss: 0, 10, 16 - supermajor
+    'mac-',    # mS: 0, 7, 17 - machminor
+    'dic-',    # nM: 0, 8, 17 - dicoid minor
+    'hyr+',    # Mn: 0, 9, 17 - hyrulic major
     'mac+',    # Sm: 0, 10, 17 - machmajor
+    'hyr-',    # nS: 0, 8, 18 - hyrulic minor
+    'aug',     # MM: 0, 9, 18
     'dic',     # Sn: 0, 10, 18 - dicoid
+    'dic+',    # MS: 0, 9, 19 - superdicoid
     'hyr',     # SM: 0, 10, 19 - hyrulic
     'mac'      # SS: 0, 10, 20 - machinoid
 ]
